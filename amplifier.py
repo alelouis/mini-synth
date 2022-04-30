@@ -6,4 +6,4 @@ class Amplifier():
         self.v_out = 0
 
     def update(self):
-        self.v_out = self.v_in.v_out * self.gain
+        self.v_out = self.v_in.v_out * self.gain.v_out

@@ -1,41 +1,40 @@
 import pyaudio
 import numpy as np
+import matplotlib.pyplot as plt
 
 from voltage import Voltage
 from vco import VCO
 from rack import Rack
 from mixer import Mixer
 from amplifier import Amplifier
+from adsr import ADSR
 
 if __name__ == '__main__':
     fs = 48000 # Hz
 
     # Modules
-    lfo = VCO(Voltage(5), fs)       # LFO (but its just slow VCO)
-    lfo_2 = VCO(Voltage(2), fs)   
-    amp = Amplifier(lfo, Voltage(10))        # Linear gain amp
-    mix = Mixer()                   # Used to add signals
-    mix.add(*[amp, Voltage(440)])   # Register modules
-    vco = VCO(mix, fs)              # Voltage Controlled Oscillator
-    amp2 = Amplifier(vco, lfo_2)
+    adsr = ADSR(
+        v_in = Voltage(0), 
+        v_attack = Voltage(1),
+        v_delay = Voltage(0.5),
+        v_sustain = Voltage(1),
+        v_release = Voltage(1))
 
     # Rack
     my_rack = Rack()                # Modules container
-    modules = [amp, amp2, lfo, lfo_2, mix, vco]  # Modules to track
+    modules = [adsr]  # Modules to track
     my_rack.add(*modules)           # Register modules
 
     # Stream
-    p = pyaudio.PyAudio()
-    stream = p.open(format=p.get_format_from_width(2),
-                channels=1,
-                rate=fs,
-                output=True)
-        
-    buffer_size, n_buffers = 512, 1000
+    buffer_size, n_buffers = 512, 100
     history_buffer = np.zeros((n_buffers, buffer_size))
 
-    output_port = amp2 # Which module output is streamed
+    output_port = adsr # Which module output is streamed
     for buffer_id in range(n_buffers):
+        if buffer_id == 20:
+            adsr.v_in = Voltage(1)
+        if buffer_id == 50:
+            adsr.v_in = Voltage(0)
         buffer_int = np.zeros(buffer_size, dtype=np.int16)
         buffer_float = np.zeros(buffer_size, dtype=np.float32)
         for sample_id in range(buffer_size):
@@ -44,4 +43,6 @@ if __name__ == '__main__':
             sample *= 2**16/2 # Int range normalization
             buffer_int[sample_id] = sample
         history_buffer[buffer_id, :] = buffer_int
-        stream.write(buffer_int.tobytes())
+
+    plt.plot(history_buffer.flatten())
+    plt.show()
