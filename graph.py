@@ -6,6 +6,7 @@ class DiGraph():
         self.succ = defaultdict(dict)
         self.prec = defaultdict(dict)
         self.objects = dict()
+        self.order = []
     
     def add(self, node1, node2, attribute={}):
         self.succ[node1].update({node2:attribute})
@@ -20,15 +21,16 @@ class DiGraph():
         self.map_object(obj.name, obj)
         for obj_in in obj.inputs:
             self.add(obj_in.name, obj.name)
+        self.order = self.topo_sort()
         
     @property
     def nodes(self):
         return set(self.prec.keys()).union(set(self.succ.keys()))
     
-    def plot(self, order):
+    def plot(self):
         gv = graphviz.Digraph()
         for node in self.succ:
-            gv.node(node, label = f'{node}:{order.index(node)}')
+            gv.node(node, label = f'{node}:{self.order.index(node)}')
             for succ in self.succ[node]:
                 gv.edge(node, succ)
         return gv
