@@ -1,9 +1,14 @@
-class Amplifier():
+from node import Node
+
+class Amplifier(Node):
     """Applies linear gain to module"""
-    def __init__(self, v_in, gain):
-        self.v_in = v_in
+    def __init__(self, value, gain):
+        super().__init__([value, gain])
+        # Inputs
+        self.value = value
         self.gain = gain
-        self.v_out = 0
+        # Outputs
+        self.outputs = [0]
 
     def update(self):
-        self.v_out = self.v_in.v_out * self.gain.v_out
+        self.outputs[0] = self.value.outputs[0] * self.gain.outputs[0]

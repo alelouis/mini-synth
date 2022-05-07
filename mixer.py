@@ -1,14 +1,13 @@
-class Mixer():
-    """Adds modules outputs together"""
-    def __init__(self):
-        self.modules = []
-        self.v_out = 0
+from node import Node
+
+class Mixer(Node):
+    """Adds inputs"""
+    def __init__(self, inputs):
+        super().__init__(inputs)
+        # Inputs
+        self.inputs = inputs
+        # Outputs
+        self.outputs = [0]
 
     def update(self):
-        self.v_out = 0
-        for module in self.modules:
-            self.v_out += module.v_out
-
-    def add(self, *args):
-        for arg in args:
-            self.modules.append(arg)
+        self.outputs[0] = sum([inp.outputs[0] for inp in self.inputs])

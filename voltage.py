@@ -1,7 +1,11 @@
-class Voltage():
-    """Constant Voltage"""
-    def __init__(self, v_in):
-        self.v_out = v_in
+from node import Node
 
+class Voltage(Node):
+    """Constant voltage"""
+    def __init__(self, value):
+        super().__init__([])
+        # Outputs
+        self.outputs = [value]
     def update(self):
         pass
+    
