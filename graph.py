@@ -30,6 +30,7 @@ class DiGraph():
     def plot(self):
         gv = graphviz.Digraph()
         for node in self.succ:
+            print(node)
             gv.node(node, label = f'{node}:{self.order.index(node)}')
             for succ in self.succ[node]:
                 gv.edge(node, succ)
