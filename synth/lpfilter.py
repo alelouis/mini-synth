@@ -1,4 +1,4 @@
-from node import Node
+from synth.node import Node
 
 class Filter(Node):
     """ Moog 24 dB/oct resonant lowpass VCF

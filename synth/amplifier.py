@@ -1,4 +1,4 @@
-from node import Node
+from synth.node import Node
 
 class Amplifier(Node):
     """Applies linear gain to module"""

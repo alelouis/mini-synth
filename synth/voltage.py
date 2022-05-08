@@ -1,4 +1,4 @@
-from node import Node
+from synth.node import Node
 
 class Voltage(Node):
     """Constant voltage"""

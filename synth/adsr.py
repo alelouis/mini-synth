@@ -1,5 +1,5 @@
 from enum import Enum
-from node import Node
+from synth.node import Node
 import copy
 
 class Event(Enum):

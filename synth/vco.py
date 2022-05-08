@@ -1,5 +1,5 @@
 import numpy as np
-from node import Node
+from synth.node import Node
         
 class VCO(Node):
     """Voltage Controlled Oscillator"""
