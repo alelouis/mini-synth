@@ -26,48 +26,42 @@ class ADSR(Node):
         self.state = 0
         self.outputs = [0]
         self.scale = 100
+        self.last_attack = 0
 
     def update(self):
         event = None
         if self.trigger.outputs[0] != self.last_trigger.outputs[0]:
-            print('all right')
-            print(self.status)
-            print(self.trigger.outputs[0])
-            print(self.last_trigger.outputs[0])
             event = Event.OFF if self.trigger.outputs[0] == 0 else Event.ON
-        self.last_trigger = copy.deepcopy(self.trigger)
-
-        if self.status == Status.IDLE and event == Event.ON:
-            print('going attack')
+            self.last_trigger = copy.deepcopy(self.trigger)
+        if event == Event.ON:
+            self.last_attack = self.outputs[0]
+            self.state = 0
             self.status = Status.ATTACK
-
-        if self.status == Status.ATTACK:
-            self.state += 1
-            self.outputs[0] += (1/self.attack.outputs[0]) / self.scale
-            if self.state > self.attack.outputs[0] * self.scale:
-                print('going delay')
-                self.state = 0
-                self.status = Status.DELAY
-
-        if self.status == Status.DELAY:
-            self.state += 1
-            self.outputs[0] -= ((1-self.sustain.outputs[0])/self.delay.outputs[0]) / self.scale
-            if self.state > self.delay.outputs[0] * self.scale:
-                print('going sustain')
-                self.status = Status.SUSTAIN
-                self.state = 0
-
-        if self.status == Status.SUSTAIN:
-            self.outputs[0] = self.sustain.outputs[0]
-
-        if self.status == Status.RELEASE:
-            self.state += 1
-            self.outputs[0] -= (self.sustain.outputs[0]/self.release.outputs[0]) / self.scale
-            if self.state > self.release.outputs[0] * self.scale:
-                print('going idle')
-                self.status = Status.IDLE
-                self.state = 0
-
-        if event == Event.OFF:
-            print('going release')
+        elif event == Event.OFF:
+            self.state = 0
+            self.release_value = self.outputs[0]
             self.status = Status.RELEASE
+        else:
+            if self.status == Status.ATTACK:
+                self.state += 1
+                self.outputs[0] += ((1-self.last_attack)/self.attack.outputs[0]) / self.scale
+                if self.state > self.attack.outputs[0] * self.scale:
+                    self.state = 0
+                    self.status = Status.DELAY
+
+            if self.status == Status.DELAY:
+                self.state += 1
+                self.outputs[0] -= ((1-self.sustain.outputs[0])/self.delay.outputs[0]) / self.scale
+                if self.state > self.delay.outputs[0] * self.scale:
+                    self.status = Status.SUSTAIN
+                    self.state = 0
+
+            if self.status == Status.SUSTAIN:
+                self.outputs[0] = self.sustain.outputs[0]
+
+            if self.status == Status.RELEASE:
+                self.state += 1
+                self.outputs[0] -= (self.release_value/self.release.outputs[0]) / self.scale
+                if self.state > self.release.outputs[0] * self.scale:
+                    self.status = Status.IDLE
+                    self.state = 0
