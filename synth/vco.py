@@ -1,9 +1,11 @@
 import numpy as np
 from synth.node import Node
-        
+
+
 class VCO(Node):
     """Voltage Controlled Oscillator"""
-    def __init__(self, frequency, fs, shape = 'sine'):
+
+    def __init__(self, frequency, fs, shape="sine"):
         super().__init__([frequency])
         # Inputs
         self.frequency = frequency
@@ -14,13 +16,13 @@ class VCO(Node):
         self.fs = fs
         self.t = 0
         self.phi = 0
-        
+
     def update(self):
-        self.t += 1/self.fs
-        f = self.frequency.outputs[0]  
-        self.phi += 2*np.pi*f/self.fs
+        self.t += 1 / self.fs
+        f = self.frequency.outputs[0]
+        self.phi += 2 * np.pi * f / self.fs
         output = np.cos(self.phi)
-        if self.shape == 'sine':
+        if self.shape == "sine":
             self.outputs[0] = output
-        elif self.shape == 'square':
+        elif self.shape == "square":
             self.outputs[0] = np.sign(output)

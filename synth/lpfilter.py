@@ -1,11 +1,13 @@
 from synth.node import Node
 
+
 class Filter(Node):
-    """ Moog 24 dB/oct resonant lowpass VCF
-    
+    """Moog 24 dB/oct resonant lowpass VCF
+
     References: CSound source code, Stilson/Smith CCRMA paper.
     Modified by paul.kellett@maxim.abel.co.uk July 2000
     """
+
     def __init__(self, value, frequency, resonance):
         super().__init__([value, frequency, resonance])
         # Inputs
@@ -29,7 +31,7 @@ class Filter(Node):
         q = 1 - frequency
         p = frequency + 0.8 * frequency * q
         f = p + p - 1
-        q = resonance * (1 + 0.5*q*(1-q+5.6*q*q))
+        q = resonance * (1 + 0.5 * q * (1 - q + 5.6 * q * q))
 
         inp -= q * self.b4
         t1 = self.b1
@@ -41,5 +43,5 @@ class Filter(Node):
         self.b4 = (self.b3 + t1) * p - self.b4 * f
         self.b4 = self.b4 - self.b4 * self.b4 * self.b4 * 0.166667
         self.b0 = inp
-        
+
         self.outputs[0] = self.b4

@@ -2,9 +2,11 @@ from enum import Enum
 from synth.node import Node
 import copy
 
+
 class Event(Enum):
     OFF = 0
     ON = 1
+
 
 class Status(Enum):
     IDLE = 0
@@ -12,6 +14,7 @@ class Status(Enum):
     DELAY = 2
     SUSTAIN = 3
     RELEASE = 4
+
 
 class ADSR(Node):
     def __init__(self, trigger, attack, delay, sustain, release):
@@ -44,14 +47,18 @@ class ADSR(Node):
         else:
             if self.status == Status.ATTACK:
                 self.state += 1
-                self.outputs[0] += ((1-self.last_attack)/self.attack.outputs[0]) / self.scale
+                self.outputs[0] += (
+                    (1 - self.last_attack) / self.attack.outputs[0]
+                ) / self.scale
                 if self.state > self.attack.outputs[0] * self.scale:
                     self.state = 0
                     self.status = Status.DELAY
 
             if self.status == Status.DELAY:
                 self.state += 1
-                self.outputs[0] -= ((1-self.sustain.outputs[0])/self.delay.outputs[0]) / self.scale
+                self.outputs[0] -= (
+                    (1 - self.sustain.outputs[0]) / self.delay.outputs[0]
+                ) / self.scale
                 if self.state > self.delay.outputs[0] * self.scale:
                     self.status = Status.SUSTAIN
                     self.state = 0
@@ -61,7 +68,9 @@ class ADSR(Node):
 
             if self.status == Status.RELEASE:
                 self.state += 1
-                self.outputs[0] -= (self.release_value/self.release.outputs[0]) / self.scale
+                self.outputs[0] -= (
+                    self.release_value / self.release.outputs[0]
+                ) / self.scale
                 if self.state > self.release.outputs[0] * self.scale:
                     self.status = Status.IDLE
                     self.state = 0

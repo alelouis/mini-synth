@@ -1,7 +1,9 @@
 from synth.node import Node
 
+
 class Mixer(Node):
     """Adds inputs"""
+
     def __init__(self, inputs):
         super().__init__(inputs)
         # Inputs

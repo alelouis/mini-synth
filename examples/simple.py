@@ -9,7 +9,7 @@ rack = Rack()
 vco_freq = Voltage(220)
 
 # Create a VCO modulated with LFO
-vco = VCO(vco_freq, fs = rack.fs) 
+vco = VCO(vco_freq, fs=rack.fs)
 
 # Register modules in declared order
 for module in [vco_freq, vco]:

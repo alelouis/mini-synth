@@ -1,7 +1,9 @@
 from synth.node import Node
 
+
 class Amplifier(Node):
     """Applies linear gain to module"""
+
     def __init__(self, value, gain):
         super().__init__([value, gain])
         # Inputs
